@@ -4,7 +4,7 @@ from sympy import symbols, diff, integrate, sympify
 app = Flask(__name__)
 x = symbols('x')  # Variable simbólica base
 
-@app.route('/api/derive', methods=['POST'])
+@app.route('/api/derivation', methods=['POST'])
 def derive():
     data = request.get_json()
     expression = data.get('expression', '')
@@ -15,7 +15,7 @@ def derive():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-@app.route('/api/integrate', methods=['POST'])
+@app.route('/api/integration', methods=['POST'])
 def integrate_expr():
     data = request.get_json()
     expression = data.get('expression', '')
