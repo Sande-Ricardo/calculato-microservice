@@ -12,11 +12,11 @@ import sympy as sp
 app = Flask(__name__)
 
 
-# Funciones/constantes que se expone al parser (ajustar según necesidd)
+# Functions/constants that are exposed to the parser (adjust as needed)
 ALLOWED = {
-    # constantes
+    # constants
     "e": sp.E, "pi": sp.pi, "I": sp.I,
-    # funciones comunes
+    # common functions
     "sin": sp.sin, "cos": sp.cos, "tan": sp.tan,
     "asin": sp.asin, "acos": sp.acos, "atan": sp.atan,
     "sinh": sp.sinh, "cosh": sp.cosh, "tanh": sp.tanh,
@@ -25,7 +25,7 @@ ALLOWED = {
     "Abs": sp.Abs, "erf": sp.erf,
 }
 
-# x = symbols('x')  # Variable simbólica base
+# x = symbols('x')  # base symbolic variable
 
 @app.route('/api/derivation', methods=['POST'])
 def derive():
