@@ -9,8 +9,9 @@ from sympy.parsing.sympy_parser import (
 )
 import sympy as sp
 
-app = Flask(__name__)
+from equation_solver import process_equation
 
+app = Flask(__name__)
 
 # Functions/constants that are exposed to the parser (adjust as needed)
 ALLOWED = {
@@ -39,6 +40,15 @@ def derive():
 def integrate_expr():
     data = request.get_json()
     return integration_req(data)
+
+@app.route('/api/equation', methods=['POST'])
+def resolve_equation():
+    data = request.get_json()
+    try:
+        response_data = process_equation(data)
+        return jsonify(response_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 def derivation_req(exp, varb):
     expr = exp
