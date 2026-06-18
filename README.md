@@ -53,19 +53,3 @@ The microservice currently exposes three primary computational engines:
    ```
    The server will start by default on `http://127.0.0.1:5000`.
 
-## API Documentation
-
-Detailed API endpoint specifications, including request structures, allowed operations, and response payloads, are available in the references directory:
-
-- [API Reference Guide](references/api_reference.md)
-- [Microservice Architecture Documentation](references/microservice_documentation.md)
-- [Methodological Development Guidelines](references/development_guidelines.md)
-
-## Development and Contribution Guidelines
-
-This project adheres to strict coding and communication standards:
-- **Code Language**: All source code, variables, and documentation must be written in English.
-- **Formatting**: Adherence to standard Python styling (PEP 8).
-- **Communication Tone**: Technical, concise, and professional. Emojis are strictly prohibited across all documentation and comments.
-
-Please consult the `references/development_guidelines.md` file before proposing major structural changes to ensure alignment with the established Application Factory and Blueprint routing patterns.

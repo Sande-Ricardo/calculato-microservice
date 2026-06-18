@@ -128,7 +128,7 @@ def factorize_expression(expr, original_latex):
     return {
         "status": "success",
         "original_expression": original_latex,
-        "final_result": sp.latex(factored),
+        "final_result": [sp.latex(factored)],
         "steps": steps
     }
 
@@ -143,7 +143,7 @@ def expand_expression(expr, original_latex):
     return {
         "status": "success",
         "original_expression": original_latex,
-        "final_result": sp.latex(expanded),
+        "final_result": [sp.latex(expanded)],
         "steps": steps
     }
 
@@ -158,6 +158,6 @@ def simplify_expression(expr, original_latex):
     return {
         "status": "success",
         "original_expression": original_latex,
-        "final_result": sp.latex(simplified),
+        "final_result": [sp.latex(simplified)],
         "steps": steps
     }
