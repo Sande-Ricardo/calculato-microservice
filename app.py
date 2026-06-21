@@ -12,6 +12,7 @@ import sympy as sp
 from engines.equation import process_equation
 from engines.derivation import derivation_req
 from engines.integration import integration_req
+from engines.matrix import process_matrix
 
 app = Flask(__name__)
 
@@ -47,7 +48,7 @@ def integrate_expr():
         response_data = integration_req(data)
         return jsonify(response_data)
     except Exception as e:
-        print(f"Error en integración: {e}")
+        print(f"Integration error: {e}")
         return jsonify({'Error': str(e)}), 400
 
 @app.route('/api/equation', methods=['POST'])
@@ -55,6 +56,15 @@ def resolve_equation():
     data = request.get_json()
     try:
         response_data = process_equation(data)
+        return jsonify(response_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/matrix', methods=['POST'])
+def resolve_matrix():
+    data = request.get_json()
+    try:
+        response_data = process_matrix(data)
         return jsonify(response_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
