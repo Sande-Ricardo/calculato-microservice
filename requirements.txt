@@ -9,3 +9,5 @@ mpmath==1.3.0
 sympy==1.14.0
 Werkzeug==3.1.3
 latex2sympy2
+flask-smorest
+marshmallow
