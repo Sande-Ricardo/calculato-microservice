@@ -4,7 +4,7 @@ Calculato is a specialized mathematical computation RESTful microservice built w
 
 
 
-## 📌 Important Note
+##  Important Note
 
 > [!NOTE]  
 > This is a subproject of **Calculato**. For the complete documentation, setup guides, and overall architecture, please refer to the main repository:
