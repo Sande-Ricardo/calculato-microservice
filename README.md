@@ -2,6 +2,18 @@
 
 Calculato is a specialized mathematical computation RESTful microservice built with Python and Flask. It leverages the power of the SymPy symbolic mathematics library to perform complex mathematical operations, returning both the final results and detailed, step-by-step resolution processes formatted in LaTeX.
 
+
+
+## 📌 Important Note
+
+> [!NOTE]  
+> This is a subproject of **Calculato**. For the complete documentation, setup guides, and overall architecture, please refer to the main repository:
+> 
+> 🔗 **[Main API Gateway README](https://github.com/Sande-Ricardo/calculato-rest_api)**
+
+
+
+
 ## Core Capabilities
 
 The microservice currently exposes three primary computational engines:
