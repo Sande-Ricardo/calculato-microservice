@@ -29,7 +29,7 @@ def compute_determinant(A):
     steps = [
         {
             "order": 1,
-            "description": "Calculamos el determinante de la matriz.",
+            "description": "Calculate the determinant of the matrix.",
             "math_state": f"\\det(A) = {latex(det_val)}"
         }
     ]
@@ -48,19 +48,19 @@ def compute_inverse(A):
     try:
         det_val = simplify(A.det())
         if det_val == 0:
-            raise ValueError("El determinante es 0, la matriz no es invertible.")
+            raise ValueError("Determinant is 0, the matrix is not invertible.")
             
         inv_A = A.inv()
         
         steps = [
             {
                 "order": 1,
-                "description": "Primero, calculamos el determinante de la matriz A. Si es diferente de cero, la inversa existe.",
+                "description": "First, calculate the determinant of matrix A. If it is different from zero, the inverse exists.",
                 "math_state": f"\\det(A) = {latex(det_val)}"
             },
             {
                 "order": 2,
-                "description": "Calculamos la matriz inversa.",
+                "description": "Calculate the inverse matrix.",
                 "math_state": f"A^{{-1}} = {latex(inv_A)}"
             }
         ]
@@ -75,7 +75,7 @@ def compute_inverse(A):
             "steps": steps
         }
     except NonInvertibleMatrixError:
-        raise ValueError("El determinante es 0, la matriz no es invertible.")
+        raise ValueError("Determinant is 0, the matrix is not invertible.")
 
 def compute_rref(A):
     rref_matrix, pivot_cols = A.rref()
@@ -83,7 +83,7 @@ def compute_rref(A):
     steps = [
         {
             "order": 1,
-            "description": "Aplicamos eliminación de Gauss-Jordan para llevar la matriz a su forma escalonada reducida.",
+            "description": "Apply Gauss-Jordan elimination to bring the matrix to its reduced row echelon form.",
             "math_state": f"\\text{{RREF}}(A) = {latex(rref_matrix)}"
         }
     ]

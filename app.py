@@ -8,8 +8,16 @@ from engines.equation import process_equation
 from engines.derivation import derivation_req
 from engines.integration import integration_req
 from engines.matrix import process_matrix
+from engines.statistics import process_descriptive_stats, process_probability
 
-from schemas import DerivationRequestSchema, IntegrationRequestSchema, EquationRequestSchema, MatrixRequestSchema
+from schemas import (
+    DerivationRequestSchema,
+    IntegrationRequestSchema,
+    EquationRequestSchema,
+    MatrixRequestSchema,
+    DescriptiveStatsRequestSchema,
+    ProbabilityRequestSchema
+)
 
 app = Flask(__name__)
 
@@ -24,6 +32,7 @@ app.config['OPENAPI_SWAGGER_UI_URL'] = 'https://cdnjs.cloudflare.com/ajax/libs/s
 api = Api(app)
 
 blp = Blueprint('computations', 'computations', url_prefix='/api', description='Mathematical Operations')
+stats_blp = Blueprint('statistics', 'statistics', url_prefix='/api/stats', description='Descriptive Statistics and Probability')
 
 ALLOWED = {
     "e": sp.E, "pi": sp.pi, "I": sp.I,
@@ -82,7 +91,47 @@ class MatrixRoute(MethodView):
         except Exception as e:
             return jsonify({'error': str(e)}), 400
 
+
+@stats_blp.route('/descriptive')
+class DescriptiveStats(MethodView):
+    @stats_blp.arguments(DescriptiveStatsRequestSchema)
+    def post(self, args):
+        """Descriptive Statistics for a given dataset"""
+        try:
+            response_data = process_descriptive_stats(args)
+            return jsonify(response_data)
+        except ValueError as e:
+            msg = str(e)
+            if "empty" in msg or "missing" in msg:
+                return jsonify({"status": "error", "message": msg}), 400
+            else:
+                return jsonify({"status": "error", "message": msg}), 422
+        except Exception as e:
+            print(f"Descriptive stats unexpected error: {e}")
+            return jsonify({"status": "error", "message": "Internal error calculating stats."}), 500
+
+
+@stats_blp.route('/probability')
+class Probability(MethodView):
+    @stats_blp.arguments(ProbabilityRequestSchema)
+    def post(self, args):
+        """Probability Calculations for distributions"""
+        try:
+            response_data = process_probability(args)
+            return jsonify(response_data)
+        except ValueError as e:
+            msg = str(e)
+            if "Unsupported" in msg or "not supported" in msg or "missing" in msg:
+                return jsonify({"status": "error", "message": msg}), 400
+            else:
+                return jsonify({"status": "error", "message": msg}), 422
+        except Exception as e:
+            print(f"SciPy unexpected error: {e}")
+            return jsonify({"status": "error", "message": "Internal error calculating distribution."}), 500
+
+
 api.register_blueprint(blp)
+api.register_blueprint(stats_blp)
 
 @app.route('/tests')
 def tests():

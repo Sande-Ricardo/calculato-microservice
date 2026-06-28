@@ -21,7 +21,7 @@ def test_api_matrix_zero_det(client):
     assert response.status_code == 400
     data = response.get_json()
     assert "error" in data
-    assert "El determinante es 0" in data["error"]
+    assert "Determinant is 0" in data["error"]
 
 def test_api_matrix_validation_error(client):
     # Missing 'operation'

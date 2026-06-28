@@ -12,3 +12,5 @@ latex2sympy2
 flask-smorest
 marshmallow
 pytest
+numpy
+scipy

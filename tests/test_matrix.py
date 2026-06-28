@@ -19,7 +19,7 @@ def test_process_matrix_inverse_zero_det():
         "matrix": [["1", "1"], ["1", "1"]],
         "operation": "inverse"
     }
-    with pytest.raises(ValueError, match="El determinante es 0"):
+    with pytest.raises(ValueError, match="Determinant is 0"):
         process_matrix(data)
 
 def test_process_matrix_determinant_valid():
