@@ -22,6 +22,7 @@ The microservice currently exposes three primary computational engines:
 2. **Symbolic Integration**: Calculates definite and indefinite integrals, breaking down the resolution into constituent mathematical steps.
 3. **Equation Resolution and Algebra**: Performs algebraic manipulation and solving (e.g., polynomial factorization, expansion, simplification, and root finding via general formulas) with explicit textual and mathematical steps.
 4. **Linear Algebra (Matrices)**: Processes operations on matrices (such as determinant, inverse, and Gauss-Jordan elimination) validating requirements and generating step-by-step LaTeX derivations.
+5. **Statistic Module**:
 
 ## System Architecture
 
