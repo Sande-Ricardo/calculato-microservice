@@ -20,7 +20,7 @@ def integration_req(data):
     }
 
 def step_to_dict(step):
-    """Convierte un objeto de integral_steps a dict con LaTeX"""
+    """Converts an integral_steps object to a dict with LaTeX"""
     data = {
         "rule": step.__class__.__name__,
         "integrand": latex(step.integrand),
