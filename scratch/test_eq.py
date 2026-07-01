@@ -3,44 +3,18 @@ from latex2sympy2 import latex2sympy
 
 def parse_latex_input(latex_str):
     try:
-        # If the expression contains '=', split it to prevent latex2sympy
-        # from solving it internally and returning a list of roots.
         if "=" in latex_str:
             parts = latex_str.split("=")
             if len(parts) == 2:
                 lhs = latex2sympy(parts[0].strip())
                 rhs = latex2sympy(parts[1].strip())
                 return sp.Eq(lhs, rhs)
-        
-        # Otherwise, parse directly (for expressions or fallback)
         expr = latex2sympy(latex_str)
         return expr
     except Exception as e:
         raise ValueError(f"Invalid LaTeX format or unparseable expression: {str(e)}")
 
-
-def process_equation(data):
-    latex_str = data.get('expression', '')
-    operation = data.get('operation', '')
-    target_variable_str = data.get('target_variable', 'x')
-    method = data.get('method', 'factorization')
-    
-    expr = parse_latex_input(latex_str)
-    var = sp.symbols(target_variable_str)
-
-    if operation == 'solve':
-        return solve_equation(expr, var, method, latex_str)
-    elif operation == 'factorize':
-        return factorize_expression(expr, latex_str)
-    elif operation == 'expand':
-        return expand_expression(expr, latex_str)
-    elif operation == 'simplify':
-        return simplify_expression(expr, latex_str)
-    else:
-        raise ValueError(f"Unsupported operation: {operation}")
-
 def solve_equation(expr, var, method, original_latex):
-    # Ensure it's an equation format for SymPy solvers (expr = 0)
     if isinstance(expr, sp.Eq):
         eq = expr.lhs - expr.rhs
     else:
@@ -49,7 +23,6 @@ def solve_equation(expr, var, method, original_latex):
     steps = []
     
     if method == 'factorization':
-        # Factorization method step-by-step logic
         factored = sp.factor(eq)
         steps.append({
             "order": 1,
@@ -78,7 +51,6 @@ def solve_equation(expr, var, method, original_latex):
         final_result = roots_latex
         
     elif method == 'general_formula' or method == 'quadratic_formula':
-        # Quadratic formula method step-by-step logic
         poly = sp.Poly(eq, var)
         if poly.degree() == 2:
             coeffs = poly.all_coeffs()
@@ -102,7 +74,6 @@ def solve_equation(expr, var, method, original_latex):
             })
             final_result = roots_latex
         else:
-            # Fallback if not a quadratic polynomial
             roots = sp.solve(eq, var)
             final_result = [f"{sp.latex(var)} = {sp.latex(root)}" for root in roots]
             steps.append({
@@ -110,16 +81,6 @@ def solve_equation(expr, var, method, original_latex):
                 "description": "Solve the equation directly.",
                 "math_state": " \\quad \\text{or} \\quad ".join(final_result)
             })
-    else:
-        # Default solving method
-        roots = sp.solve(eq, var)
-        final_result = [f"{sp.latex(var)} = {sp.latex(root)}" for root in roots]
-        steps.append({
-            "order": 1,
-            "description": "Solve the equation.",
-            "math_state": " \\quad \\text{or} \\quad ".join(final_result) if final_result else "No solution"
-        })
-
     return {
         "status": "success",
         "original_expression": original_latex,
@@ -127,47 +88,14 @@ def solve_equation(expr, var, method, original_latex):
         "steps": steps
     }
 
-def factorize_expression(expr, original_latex):
-    steps = []
-    factored = sp.factor(expr)
-    steps.append({
-        "order": 1,
-        "description": "Factorize the mathematical expression.",
-        "math_state": sp.latex(factored)
-    })
-    return {
-        "status": "success",
-        "original_expression": original_latex,
-        "final_result": [sp.latex(factored)],
-        "steps": steps
-    }
+# Test factorization:
+expr1 = parse_latex_input("x^2 - 5x + 6 = 0")
+res1 = solve_equation(expr1, sp.symbols('x'), 'factorization', "x^2 - 5x + 6 = 0")
+print("Factorization result:")
+print(res1)
 
-def expand_expression(expr, original_latex):
-    steps = []
-    expanded = sp.expand(expr)
-    steps.append({
-        "order": 1,
-        "description": "Expand the mathematical expression.",
-        "math_state": sp.latex(expanded)
-    })
-    return {
-        "status": "success",
-        "original_expression": original_latex,
-        "final_result": [sp.latex(expanded)],
-        "steps": steps
-    }
-
-def simplify_expression(expr, original_latex):
-    steps = []
-    simplified = sp.simplify(expr)
-    steps.append({
-        "order": 1,
-        "description": "Simplify the mathematical expression.",
-        "math_state": sp.latex(simplified)
-    })
-    return {
-        "status": "success",
-        "original_expression": original_latex,
-        "final_result": [sp.latex(simplified)],
-        "steps": steps
-    }
+# Test quadratic formula:
+expr2 = parse_latex_input("x^2 - 5x + 6 = 0")
+res2 = solve_equation(expr2, sp.symbols('x'), 'quadratic_formula', "x^2 - 5x + 6 = 0")
+print("\nQuadratic formula result:")
+print(res2)
