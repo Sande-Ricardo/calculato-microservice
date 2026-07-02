@@ -158,3 +158,93 @@ def classify_ode(equation_expr, dep_var: str = 'y', ind_var: str = 'x'):
     primary_name = ODE_CLASSIFICATION_MAP.get(primary_id, primary_id.replace('_', ' ').title())
     
     return primary_id, primary_name, list(classifications)
+
+def parse_initial_conditions(initial_conditions: dict, dep_var_func, ind_var_sym, dep_var: str = 'y', ind_var: str = 'x') -> dict:
+    """
+    Parse a dictionary of initial conditions into a SymPy ics dictionary.
+    Supports formats like:
+      - x0 / x_0 / t0 / t_0 for independent variable
+      - y0 / y_0 / u0 for y(x0)
+      - y0_prime / y0' / y_0_prime / y0_dot / dy_dx_0 for y'(x0)
+      - y0_double_prime / y0'' / y_0_double_prime / y0_ddot / d2y_dx2_0 for y''(x0)
+    """
+    if not initial_conditions:
+        return None
+        
+    def get_val(keys):
+        for k in keys:
+            if k in initial_conditions:
+                try:
+                    return sp.sympify(initial_conditions[k])
+                except Exception:
+                    pass
+        return None
+        
+    x0 = get_val([f'{ind_var}0', f'{ind_var}_0', 'x0', 'x_0', 't0', 't_0'])
+    if x0 is None:
+        return None
+        
+    ics = {}
+    
+    y0 = get_val([f'{dep_var}0', f'{dep_var}_0', 'y0', 'y_0', 'u0', 'u_0'])
+    if y0 is not None:
+        ics[dep_var_func.subs(ind_var_sym, x0)] = y0
+        
+    y0_prime = get_val([
+        f'{dep_var}0_prime', f'{dep_var}_0_prime', f"{dep_var}0'", f"{dep_var}_0'",
+        'y0_prime', 'y_0_prime', 'y0_dot', 'y_0_dot', 'dy_dx_0'
+    ])
+    if y0_prime is not None:
+        ics[dep_var_func.diff(ind_var_sym).subs(ind_var_sym, x0)] = y0_prime
+        
+    y0_db_prime = get_val([
+        f'{dep_var}0_double_prime', f'{dep_var}_0_double_prime', f"{dep_var}0''", f"{dep_var}_0''",
+        'y0_double_prime', 'y_0_double_prime', 'y0_ddot', 'y_0_ddot', 'd2y_dx2_0'
+    ])
+    if y0_db_prime is not None:
+        ics[dep_var_func.diff(ind_var_sym, 2).subs(ind_var_sym, x0)] = y0_db_prime
+        
+    return ics
+
+def solve_ode(equation_expr, dep_var: str = 'y', ind_var: str = 'x', initial_conditions: dict = None):
+    """
+    Solves the parsed SymPy Eq ODE.
+    Returns a tuple (general_solution_expr, particular_solution_expr).
+    Raises ValueError if solving fails.
+    """
+    t_x = sp.Symbol(ind_var)
+    t_y = sp.Function(dep_var)(t_x)
+    
+    # 1. Solve General Solution
+    try:
+        general_sol = sp.dsolve(equation_expr, t_y)
+    except Exception as e:
+        raise ValueError(f"Failed to find general solution: {str(e)}")
+        
+    particular_sol = None
+    
+    # 2. Solve Particular Solution if initial conditions are provided
+    if initial_conditions:
+        ics = parse_initial_conditions(initial_conditions, t_y, t_x, dep_var, ind_var)
+        if ics:
+            try:
+                particular_sol = sp.dsolve(equation_expr, t_y, ics=ics)
+            except Exception as e:
+                raise ValueError(f"Failed to find particular solution with initial conditions: {str(e)}")
+                
+    return general_sol, particular_sol
+
+def format_solution(sol, use_latex: bool = False) -> str:
+    """
+    Formats a SymPy Eq (or list of Eq) into equation strings (e.g. y(x) = C1*exp(-2*x) + exp(x)/3).
+    """
+    if sol is None:
+        return None
+    if isinstance(sol, list):
+        return [format_solution(s, use_latex) for s in sol]
+    if isinstance(sol, sp.Eq):
+        if use_latex:
+            return f"{sp.latex(sol.lhs)} = {sp.latex(sol.rhs)}"
+        else:
+            return f"{str(sol.lhs)} = {str(sol.rhs)}"
+    return str(sol)
